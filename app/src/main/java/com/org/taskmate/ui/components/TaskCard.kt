@@ -2,12 +2,13 @@ package com.org.taskmate.ui.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CheckBox
 import androidx.compose.material.icons.outlined.CheckBoxOutlineBlank
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.org.taskmate.model.Task
+import com.org.taskmate.data.model.Task
 
 @Composable
 fun TaskCard(
@@ -29,7 +30,11 @@ fun TaskCard(
         ) {
 
             Icon(
-                imageVector = Icons.Outlined.CheckBoxOutlineBlank,
+                imageVector =
+                    if (task.isCompleted)
+                        Icons.Outlined.CheckBox
+                    else
+                        Icons.Outlined.CheckBoxOutlineBlank,
                 contentDescription = null
             )
 
@@ -43,12 +48,17 @@ fun TaskCard(
                 )
 
                 Text(
-                    text = task.category,
+                    text = task.category.displayName,
                     style = MaterialTheme.typography.bodyMedium
                 )
 
                 Text(
-                    text = task.due,
+                    text = "Priority: ${task.priority.displayName}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+
+                Text(
+                    text = task.dueDate ?: "No Due Date",
                     style = MaterialTheme.typography.bodySmall
                 )
 

@@ -7,17 +7,51 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.org.taskmate.ui.components.TaskCard
+import com.org.taskmate.viewmodel.HomeViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.org.taskmate.data.model.Task
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Icon
 
 @Composable
 fun HomeScreen(
-    paddingValues: PaddingValues
+    onAddTaskClick: () -> Unit
 ) {
+    val homeViewModel: HomeViewModel = viewModel()
+
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = onAddTaskClick
+            ) {
+                Text("+")
+            }
+        }
+    ) { innerPadding ->
+
+        HomeContent(
+            paddingValues = innerPadding,
+            tasks = homeViewModel.tasks
+        )
+
+    }
+}
+
+@Composable
+private fun HomeContent(
+    paddingValues: PaddingValues,
+    tasks: List<Task>
+) {
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -42,12 +76,18 @@ fun HomeScreen(
         )
 
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(top = 16.dp)
+            modifier = Modifier.padding(top = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(HomeViewModel.tasks) { task ->
-                TaskCard(task)
+
+            items(tasks) { task ->
+
+                TaskCard(task = task)
+
             }
+
         }
+
     }
+
 }
