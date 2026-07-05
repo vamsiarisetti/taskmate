@@ -142,16 +142,6 @@ fun AddTaskScreen(
                     onBack()
                 }
             )
-            /*AppButton(
-                text = "Save Task",
-                enabled = viewModel.title.isNotBlank(),
-                onClick = {
-
-                    // Sprint 3
-                    // Save to Room Database
-
-                }
-            )*/
 
         }
 
