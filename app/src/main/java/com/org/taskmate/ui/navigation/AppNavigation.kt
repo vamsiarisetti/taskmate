@@ -22,6 +22,11 @@ fun AppNavigation() {
             HomeScreen(
                 onAddTaskClick = {
                     navController.navigate(Screen.AddTask.route)
+                },
+                onEditTaskClick = { taskId ->
+                    navController.navigate(
+                        Screen.EditTask.createRoute(taskId)
+                    )
                 }
             )
 
@@ -30,13 +35,28 @@ fun AppNavigation() {
         composable(Screen.AddTask.route) {
 
             AddTaskScreen(
+                taskId = null,
                 onBack = {
                     navController.popBackStack()
                 }
             )
 
         }
+        composable(
+            route = Screen.EditTask.route
+        ) { backStackEntry ->
 
+            val taskId =
+                backStackEntry.arguments
+                    ?.getString("taskId")
+                    ?.toLong()
+
+            AddTaskScreen(
+                taskId = taskId,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
-
 }

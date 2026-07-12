@@ -1,5 +1,6 @@
 package com.org.taskmate.data.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.org.taskmate.data.enums.Category
@@ -23,5 +24,6 @@ data class TaskEntity(
 
     val reminderTime: String?,
 
-    val isCompleted: Boolean
+    @ColumnInfo(name = "isCompleted")
+    val isCompleted: Boolean = false
 )

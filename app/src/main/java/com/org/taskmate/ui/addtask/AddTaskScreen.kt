@@ -22,16 +22,36 @@ import com.org.taskmate.ui.components.PrioritySelector
 import com.org.taskmate.ui.components.TimePickerField
 import com.org.taskmate.viewmodel.AddTaskViewModel
 import java.util.Calendar
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import com.org.taskmate.di.AppContainer
+import com.org.taskmate.viewmodel.TaskViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTaskScreen(
+    taskId: Long?,
     onBack: () -> Unit
 ) {
 
-    val viewModel: AddTaskViewModel = viewModel()
-
     val context = LocalContext.current
+
+    val factory = remember {
+        TaskViewModelFactory(
+            AppContainer.repository(context)
+        )
+    }
+
+    val viewModel: AddTaskViewModel = viewModel(
+        factory = factory
+    )
+
+    LaunchedEffect(taskId) {
+        taskId?.let {
+            viewModel.loadTask(it)
+        }
+    }
+
     val calendar = Calendar.getInstance()
 
     Scaffold(
@@ -135,10 +155,18 @@ fun AddTaskScreen(
             )
 
             AppButton(
-                text = "Save Task",
+                text =
+                    if (taskId == null)
+                        "Save Task"
+                    else
+                        "Update Task",
                 enabled = viewModel.title.isNotBlank(),
                 onClick = {
-                    viewModel.saveTask()
+                    if (taskId == null) {
+                        viewModel.saveTask()
+                    } else {
+                        viewModel.updateTask()
+                    }
                     onBack()
                 }
             )

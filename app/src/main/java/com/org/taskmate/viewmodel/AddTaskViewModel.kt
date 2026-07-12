@@ -9,8 +9,19 @@ import com.org.taskmate.data.enums.Priority
 import com.org.taskmate.data.model.Task
 import com.org.taskmate.data.repository.TaskRepository
 
-class AddTaskViewModel : ViewModel() {
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.org.taskmate.di.AppContainer
+import kotlinx.coroutines.launch
 
+class AddTaskViewModel(
+    private val repository: TaskRepository
+) : ViewModel() {
+
+//    private val repository =
+//        AppContainer.repository(application)
+    private var editingTaskId: Long? = null
     var title by mutableStateOf("")
         private set
 
@@ -64,18 +75,63 @@ class AddTaskViewModel : ViewModel() {
 
     fun saveTask() {
 
-        TaskRepository.addTask(
-            Task(
-                title = title,
-                description = description,
-                category = category,
-                priority = priority,
-                dueDate = dueDate,
-                reminderTime = reminderTime,
-                isCompleted = false
-            )
-        )
+        viewModelScope.launch {
 
-        clearForm()
+            repository.insert(
+                Task(
+                    title = title,
+                    description = description,
+                    category = category,
+                    priority = priority,
+                    dueDate = dueDate,
+                    reminderTime = reminderTime,
+                    isCompleted = false
+                )
+            )
+
+            clearForm()
+        }
+    }
+
+    fun loadTask(taskId: Long) {
+
+        viewModelScope.launch {
+
+            repository.getTaskById(taskId)?.let { task ->
+
+                editingTaskId = task.id
+
+                title = task.title
+                description = task.description
+                category = task.category
+                priority = task.priority
+                dueDate = task.dueDate ?: ""
+                reminderTime = task.reminderTime ?: ""
+            }
+        }
+    }
+
+    fun updateTask() {
+
+        val id = editingTaskId ?: return
+
+        viewModelScope.launch {
+
+            repository.update(
+
+                Task(
+                    id = id,
+                    title = title,
+                    description = description,
+                    category = category,
+                    priority = priority,
+                    dueDate = dueDate,
+                    reminderTime = reminderTime,
+                    isCompleted = false
+                )
+            )
+
+            clearForm()
+        }
     }
 }
